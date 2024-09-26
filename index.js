@@ -32,7 +32,7 @@ app.listen(PORT,()=>{
 });
 
 app.use('/',(req,res)=>{
-     res.send("<h1> welcome to FF-A MultiVendor Platform");
+     res.send("<h1>welcome to FF-A MutliVendor Platform</h1>");
 });
 
   
