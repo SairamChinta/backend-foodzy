@@ -10,7 +10,7 @@ const path = require('path');
 const cors = require('cors');
 
 const app=express();
-const PORT=4000;
+const PORT = process.env.PORT || 4000;
 
 dotEnv.config();
 app.use(cors());
@@ -31,8 +31,8 @@ app.listen(PORT,()=>{
     console.log(`server is running at ${PORT}`);
 });
 
-app.use('/home',(req,res)=>{
-     console.log("<h1> welcome to FlavorFusion");
+app.use('/',(req,res)=>{
+     res.send("<h1> welcome to FF-A MultiVendor Platform");
 });
 
   
