@@ -1,16 +1,16 @@
-const Product= require("../models/Product");
-const multer = require("multer");
-const Firm = require("../models/Firm");
-const path = require('path');
+import Product, { find, findByIdAndDelete } from "../models/Product";
+import multer, { diskStorage } from "multer";
+import { findById } from "../models/Firm";
+import { extname } from 'path';
 
-const storage = multer.diskStorage({
+const storage = diskStorage({
     destination: function (req, file, cb) {
       // Specify the destination directory for uploads
       cb(null, './uploads');
     },
     filename: function (req, file, cb) {
       // Rename the file to ensure uniqueness
-      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+      cb(null, file.fieldname + '-' + Date.now() + extname(file.originalname));
     }
 });
 
@@ -22,7 +22,7 @@ const addProduct = async(req,res)=>{
         const image=req.file?req.file.file.name:undefined;
 
         const firmId=req.params.firmId;
-        const firm = await Firm.findById(firmId);
+        const firm = await findById(firmId);
         if(!firmId){
             res.status(404).json({error:"firm not found"});
         
@@ -45,7 +45,7 @@ const getProductByFirm = async(req,res)=>{
 
     try {
         const firmId= req.params.firmId;
-        const firm = await Firm.findById(firmId);
+        const firm = await findById(firmId);
         if(!firm){
             return res.status(404).json({error:"firm not found"});
 
@@ -53,7 +53,7 @@ const getProductByFirm = async(req,res)=>{
 
         const restraurantName=firm.firmName;
 
-        const products= await Product.find({firm: firmId});
+        const products= await find({firm: firmId});
         res.status(200).json({restraurantName, products});
 
     } catch (error) {
@@ -64,7 +64,7 @@ const getProductByFirm = async(req,res)=>{
 const deleteProductById= async(req,res)=>{
     try {
         const productId = req.params.productId;
-        const deletedProduct = await Product.findByIdAndDelete(productId);
+        const deletedProduct = await findByIdAndDelete(productId);
         if(!deletedProduct){
             res.status(404).json({error:'Product Not Found'});
         }
@@ -74,4 +74,4 @@ const deleteProductById= async(req,res)=>{
     }
 }
 
-module.exports = {addProduct:[upload.single('image'),addProduct],getProductByFirm,deleteProductById};
+export default {addProduct:[upload.single('image'),addProduct],getProductByFirm,deleteProductById};

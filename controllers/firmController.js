@@ -1,17 +1,17 @@
 
-const Firm=require('../models/Firm');
-const Vendor=require('../models/Vendor');
-const multer = require('multer');
-const path = require('path');
+import Firm, { findByIdAndDelete } from '../models/Firm';
+import { findById } from '../models/Vendor';
+import multer, { diskStorage } from 'multer';
+import { extname } from 'path';
 
-const storage = multer.diskStorage({
+const storage = diskStorage({
     destination: function (req, file, cb) {
       // Specify the destination directory for uploads
       cb(null, './uploads');
     },
     filename: function (req, file, cb) {
       // Rename the file to ensure uniqueness
-      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+      cb(null, file.fieldname + '-' + Date.now() + extname(file.originalname));
     }
 });
 
@@ -23,7 +23,7 @@ const addFirm = async(req,res)=>{
     
     const image=req.file?req.file.file.name:undefined;
 
-    const vendor= await Vendor.findById(req.vendorId);
+    const vendor= await findById(req.vendorId);
     if(!vendor){
         return res.status(404).json({error:'vendor not found'})
     }
@@ -45,7 +45,7 @@ const addFirm = async(req,res)=>{
 const deleteFirmById = async(req,res)=>{
   try {
     const firmId=req.params.firmId;
-    const deletedFirm= await Firm.findByIdAndDelete(firmId);
+    const deletedFirm= await findByIdAndDelete(firmId);
 
     if(!deletedFirm){
         return res.status(404).json({error:"Firm Not Found"})
@@ -56,4 +56,4 @@ const deleteFirmById = async(req,res)=>{
   }
 }
 
-module.exports={addFirm:[upload.single('image'),addFirm],deleteFirmById}
+export default{addFirm:[upload.single('image'),addFirm],deleteFirmById}
